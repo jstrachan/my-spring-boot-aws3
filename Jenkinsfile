@@ -11,6 +11,7 @@ pipeline {
       GIT_API_TOKEN     = "$GIT_CREDS_PSW"
       ACCOUNT = "jstrachan"
       REGION = "eu-west-1"
+      DOCKER_REGISTRY = "$ACCOUNT.dkr.ecr.$REGION.amazonaws.com  
     }
     stages {
       stage('CI Build and push snapshpt') {
@@ -26,14 +27,14 @@ pipeline {
           container('maven') {
             sh "mvn versions:set -DnewVersion=$PREVIEW_VERSION"
             sh "mvn install"
-            sh "docker build -f Dockerfile.release -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION ."
-            //sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION"
+            sh "docker build -f Dockerfile.release -t $DOCKER_REGISTRY/$APP_NAME:$PREVIEW_VERSION ."
+            sh "docker push $DOCKER_REGISTRY/$APP_NAME:$PREVIEW_VERSION"
           }
 
           dir ('./charts/preview') {
            container('maven') {
              sh "make preview"
-             //sh "jx preview --app $APP_NAME --dir ../.."
+             sh "jx preview --app $APP_NAME --dir ../.."
            }
           }
         }
@@ -60,8 +61,8 @@ pipeline {
           container('maven') {
             sh 'mvn clean deploy'
 
-            sh "docker build -f Dockerfile.release -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION) ."
-            sh "docker push $ACCOUNT.dkr.ecr.$REGION.amazonaws.com/$APP_NAME:\$(cat VERSION)"
+            sh "docker build -f Dockerfile.release -t \$DOCKER_REGISTRY/$APP_NAME:\$(cat VERSION) ."
+            sh "docker push $DOCKER_REGISTRY/$APP_NAME:\$(cat VERSION)"
             //sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION)"
           }
         }
