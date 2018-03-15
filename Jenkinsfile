@@ -9,9 +9,7 @@ pipeline {
       CHARTMUSEUM_CREDS = credentials('jenkins-x-chartmuseum')
       GIT_USERNAME      = "$GIT_CREDS_USR"
       GIT_API_TOKEN     = "$GIT_CREDS_PSW"
-      ACCOUNT = "jstrachan"
-      REGION = "eu-west-1"
-      DOCKER_REGISTRY = "$ACCOUNT.dkr.ecr.$REGION.amazonaws.com"  
+      DOCKER_REGISTRY  = "jstrachan.dkr.ecr.eu-west-1.amazonaws.com"  
     }
     stages {
       stage('CI Build and push snapshpt') {
