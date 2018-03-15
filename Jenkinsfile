@@ -11,7 +11,7 @@ pipeline {
       GIT_API_TOKEN     = "$GIT_CREDS_PSW"
       ACCOUNT = "jstrachan"
       REGION = "eu-west-1"
-      DOCKER_REGISTRY = "$ACCOUNT.dkr.ecr.$REGION.amazonaws.com  
+      DOCKER_REGISTRY = "$ACCOUNT.dkr.ecr.$REGION.amazonaws.com"  
     }
     stages {
       stage('CI Build and push snapshpt') {
